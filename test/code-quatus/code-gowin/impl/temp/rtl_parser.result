@@ -1,0 +1,82 @@
+[
+ {
+  "InstFile" : "C:/Users/Admin/Desktop/test/code-quatus/code-gowin/src/Top_module.v",
+  "InstLine" : 4,
+  "InstName" : "Top_module",
+  "ModuleFile" : "C:/Users/Admin/Desktop/test/code-quatus/code-gowin/src/Top_module.v",
+  "ModuleLine" : 4,
+  "ModuleName" : "Top_module",
+  "SubInsts" : [
+   {
+    "InstFile" : "C:/Users/Admin/Desktop/test/code-quatus/code-gowin/src/Top_module.v",
+    "InstLine" : 59,
+    "InstName" : "clk500kHZ",
+    "ModuleFile" : "C:/Users/Admin/Desktop/test/code-quatus/code-gowin/src/CLK_500K.v",
+    "ModuleLine" : 6,
+    "ModuleName" : "clk_500k"
+   },
+   {
+    "InstFile" : "C:/Users/Admin/Desktop/test/code-quatus/code-gowin/src/Top_module.v",
+    "InstLine" : 65,
+    "InstName" : "clk1500kHZ",
+    "ModuleFile" : "C:/Users/Admin/Desktop/test/code-quatus/code-gowin/src/CLK_1500K.v",
+    "ModuleLine" : 6,
+    "ModuleName" : "clk_1500k"
+   },
+   {
+    "InstFile" : "C:/Users/Admin/Desktop/test/code-quatus/code-gowin/src/Top_module.v",
+    "InstLine" : 71,
+    "InstName" : "IOC",
+    "ModuleFile" : "C:/Users/Admin/Desktop/test/code-quatus/code-gowin/src/LCD_top.v",
+    "ModuleLine" : 4,
+    "ModuleName" : "LCD_top",
+    "SubInsts" : [
+     {
+      "InstFile" : "C:/Users/Admin/Desktop/test/code-quatus/code-gowin/src/LCD_top.v",
+      "InstLine" : 24,
+      "InstName" : "send",
+      "ModuleFile" : "C:/Users/Admin/Desktop/test/code-quatus/code-gowin/src/LCD_Send.v",
+      "ModuleLine" : 3,
+      "ModuleName" : "LCD_send",
+      "SubInsts" : [
+       {
+        "InstFile" : "C:/Users/Admin/Desktop/test/code-quatus/code-gowin/src/LCD_Send.v",
+        "InstLine" : 20,
+        "InstName" : "SendLCD",
+        "ModuleFile" : "C:/Users/Admin/Desktop/test/code-quatus/code-gowin/src/I2C_TX.v",
+        "ModuleLine" : 5,
+        "ModuleName" : "I2C_TX"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "InstFile" : "C:/Users/Admin/Desktop/test/code-quatus/code-gowin/src/Top_module.v",
+    "InstLine" : 85,
+    "InstName" : "Lux",
+    "ModuleFile" : "C:/Users/Admin/Desktop/test/code-quatus/code-gowin/src/BH1750_convert.v",
+    "ModuleLine" : 1,
+    "ModuleName" : "BH1750_convert",
+    "SubInsts" : [
+     {
+      "InstFile" : "C:/Users/Admin/Desktop/test/code-quatus/code-gowin/src/BH1750_convert.v",
+      "InstLine" : 48,
+      "InstName" : "uut1",
+      "ModuleFile" : "C:/Users/Admin/Desktop/test/code-quatus/code-gowin/src/I2C_RX.v",
+      "ModuleLine" : 3,
+      "ModuleName" : "I2C_RX"
+     },
+     {
+      "InstFile" : "C:/Users/Admin/Desktop/test/code-quatus/code-gowin/src/BH1750_convert.v",
+      "InstLine" : 49,
+      "InstName" : "uut2",
+      "ModuleFile" : "C:/Users/Admin/Desktop/test/code-quatus/code-gowin/src/I2C_TX.v",
+      "ModuleLine" : 5,
+      "ModuleName" : "I2C_TX"
+     }
+    ]
+   }
+  ]
+ }
+]

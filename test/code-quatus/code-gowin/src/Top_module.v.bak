@@ -1,0 +1,423 @@
+
+
+
+module top_moduleLCD(
+    input clk,
+    input rst,
+    input speed,
+    
+    output wire xong,
+    output wire xongIOC,
+
+    inout sda,
+    inout scl
+);
+
+////////////////////////////////////////Hang bien////////////////////////////////////
+    parameter LCD_ADDRESS = 7'h27;
+    parameter READ = 1'b1;
+    parameter WRITE = 1'b0;
+
+    parameter INIT = 0;
+    parameter READ_BH1750 = 1;
+    parameter RESET_CURSER = 2;
+    parameter DISPLAY_LUX = 3;
+    parameter SET_ADDRESS = 4;
+    parameter DISPLAY_A = 5;
+    parameter DISPLAY_B = 6;
+    parameter DISPLAY_C = 7;
+    parameter DISPLAY_D = 8;
+    parameter DISPLAY_E = 9;
+    parameter DISPLAY_F = 10;
+    parameter IDLE = 11;
+
+    
+
+///////////////////////////////////////////Wire, reg, int//////////////////////////////////////////////
+    wire clk1500k, clk500k;
+    wire doneLCD, doneIOC, doneRL;
+    wire [15:0] lux;
+
+    integer Index_Display_Temp = 0;
+    integer count = 0;
+
+
+    reg enableIOC = 0;
+    reg enableBH1750 = 0;
+
+    reg [7:0] data;
+    reg [7:0] add;
+    reg modeLCD;
+    reg init = 0;
+    
+    integer fsm = 0;
+
+
+
+
+///////////////////////////////////////////Lien ket cac module///////////////////////////////////////
+    clk_500k clk500kHZ(
+                    .clk27m(clk), 
+                    .rst(rst), 
+                    .clk500k(clk500k)
+    );
+
+    clk_1500k clk1500kHZ(
+                    .clk27m(clk), 
+                    .rst(rst), 
+                    .clk1500k(clk1500k)
+    );
+ 
+    LCD_top IOC(
+                    .clk(clk500k), 
+                    .rst(rst), 
+                    .enable(enableIOC), 
+                    .init(init), 
+                    .mode(modeLCD), 
+                    .datain(data), 
+                    .add(add), 
+                    .done(doneLCD), 
+                    .doneIOC(doneIOC), 
+                    .sda(sda), 
+                    .scl(scl)
+    );
+
+    BH1750_convert Lux(
+                    .clk(clk1500k),
+                    .enable(enableBH1750),
+                    .rst(rst),
+                    .done(doneRL),
+                    .data(lux),
+                    .sda(sda),
+                    .scl(scl)
+    );
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////Khoi thuc thi chinh//////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    always @(posedge clk500k) begin
+        if (~rst) begin
+            fsm <= INIT;
+            enableIOC <= 0;
+            enableBH1750 <= 0;
+            Index_Display_Temp <= 0;
+            count <= 0;
+        end
+        else begin
+            case (fsm)
+                INIT: begin                                
+                    enableIOC <= 1;
+                    add <= {LCD_ADDRESS, WRITE};
+                    init <= 1;
+                    modeLCD <= 0;
+                    if (doneLCD) begin
+                        enableIOC <= 0;
+                        init <= 0;
+                        fsm <= READ_BH1750;
+                    end
+                end
+             
+                READ_BH1750: begin
+                    enableBH1750 <= 1;
+                    if (doneRL) begin
+                        enableBH1750 <= 0;
+                        fsm <= RESET_CURSER;
+                    end
+                end
+                RESET_CURSER: begin
+                    enableIOC <= 1;
+                    add <= {LCD_ADDRESS, WRITE};
+                    data <= 8'h02;
+                    init <= 0;
+                    modeLCD <= 0;
+                    if (doneLCD) begin
+                        fsm <= DISPLAY_LUX;
+                        enableIOC <= 0;
+                    end
+                end
+                DISPLAY_LUX: begin                               
+                    enableIOC <= 1;
+                    case (Index_Display_Temp)  
+                        0: data <= "L";
+                        1: data <= "U";
+                        2: data <= "X";
+                        3: data <= ":";
+                        4: data <= 48 + lux/10000;
+                        5: data <= 48 + (lux%10000)/1000;
+                        6: data <= 48 + (lux%1000)/100;
+                        7: data <= 48 + (lux%100)/10;
+                        8: data <= 48 + lux%10;
+                        9: data <= " ";
+                        10: data <= 48 + (time_out/500)/100;
+                        11: data <= 48 + ((time_out/500)/10)%10;
+                        12: data <= 48 + (time_out/500)%10;
+                        13: data <= "m";
+                        14: data <= "s";
+                    endcase
+                    add <= {LCD_ADDRESS, WRITE};
+                    init <= 0;
+                    modeLCD <= 1;
+                    if (doneLCD) begin
+                        enableIOC <= 0;
+                        Index_Display_Temp <= Index_Display_Temp + 1;
+                        if (Index_Display_Temp == 14) begin
+                            Index_Display_Temp <= 0;
+                            fsm <= SET_ADDRESS;
+                        end
+                    end
+                end  
+                SET_ADDRESS: begin
+                    enableIOC <= 1;
+                    add <= {LCD_ADDRESS, WRITE};
+                    data <= 8'hC0;
+                    init <= 0;
+                    modeLCD <= 0;
+                    if (doneLCD) begin
+                        if (lux < 30) fsm <= DISPLAY_A;
+                      //  else if (lux < 100) fsm <= DISPLAY_B;
+                        else if (lux < 500) fsm <= DISPLAY_C;
+                        //else if (lux >500 & lux < 1000) fsm <= DISPLAY_D;
+                        else if (lux >1000 & lux < 10000) fsm <= DISPLAY_E;
+                        else fsm <= DISPLAY_F;
+                        enableIOC <= 0;
+                    end
+                end
+                DISPLAY_A: begin                               
+                    enableIOC <= 1;
+                    case (Index_Display_Temp)  
+                        0: data <= " ";
+                        1: data <= " ";
+                        2: data <= " ";
+                        3: data <= " ";
+                        4: data <= "B";
+                        5: data <= "A";
+                        6: data <= "N";
+                        7: data <= " ";
+                        8: data <= "D";
+                        9: data <= "E";
+                        10: data <= "M";
+                        11: data <= " ";
+                        12: data <= " ";
+                        13: data <= " ";
+                        14: data <= " ";
+                        15: data <= " ";
+                    endcase
+                    add <= {LCD_ADDRESS, WRITE};
+                    init <= 0;
+                    modeLCD <= 1;
+                    if (doneLCD) begin
+                        enableIOC <= 0;
+                        Index_Display_Temp <= Index_Display_Temp + 1;
+                        if (Index_Display_Temp == 15) begin
+                            Index_Display_Temp <= 0;
+                            fsm <= IDLE;
+                        end
+                    end
+                end  
+                DISPLAY_B: begin                               
+                    enableIOC <= 1;
+                    case (Index_Display_Temp)  
+                        0: data <= " ";
+                        1: data <= " ";
+                        2: data <= " ";
+                        3: data <= " ";
+                        4: data <= " ";
+                        5: data <= "T";
+                        6: data <= "A";
+                        7: data <= "M";
+                        8: data <= " ";
+                        9: data <= "O";
+                        10: data <= "N";
+                        11: data <= " ";
+                        12: data <= " ";
+                        13: data <= " ";
+                        14: data <= " ";
+                        15: data <= " ";
+                    endcase
+                    add <= {LCD_ADDRESS, WRITE};
+                    init <= 0;
+                    modeLCD <= 1;
+                    if (doneLCD) begin
+                        enableIOC <= 0;
+                        Index_Display_Temp <= Index_Display_Temp + 1;
+                        if (Index_Display_Temp == 15) begin
+                            Index_Display_Temp <= 0;
+                            fsm <= IDLE;
+                        end
+                    end
+                end  
+                DISPLAY_C: begin                               
+                    enableIOC <= 1;
+                    case (Index_Display_Temp)  
+                        0: data <= " ";
+                        1: data <= " ";
+                        2: data <= "T";
+                        3: data <= "R";
+                        4: data <= "O";
+                        5: data <= "N";
+                        6: data <= "G";
+                        7: data <= " ";
+                        8: data <= "P";
+                        9: data <= "H";
+                        10: data <= "O";
+                        11: data <= "N";
+                        12: data <= "G";
+                        13: data <= " ";
+                        14: data <= " ";
+                        15: data <= " ";
+                    endcase
+                    add <= {LCD_ADDRESS, WRITE};
+                    init <= 0;
+                    modeLCD <= 1;
+                    if (doneLCD) begin
+                        enableIOC <= 0;
+                        Index_Display_Temp <= Index_Display_Temp + 1;
+                        if (Index_Display_Temp == 15) begin
+                            Index_Display_Temp <= 0;
+                            fsm <= IDLE;
+                        end
+                    end
+                end  
+                DISPLAY_D: begin                               
+                    enableIOC <= 1;
+                    case (Index_Display_Temp)  
+                        0: data <= " ";
+                        1: data <= " ";
+                        2: data <= " ";
+                        3: data <= " ";
+                        4: data <= "H";
+                        5: data <= "O";
+                        6: data <= "I";
+                        7: data <= " ";
+                        8: data <= "C";
+                        9: data <= "H";
+                        10: data <= "O";
+                        11: data <= "I";
+                        12: data <= " ";
+                        13: data <= " ";
+                        14: data <= " ";
+                        15: data <= " ";
+                    endcase
+                    add <= {LCD_ADDRESS, WRITE};
+                    init <= 0;
+                    modeLCD <= 1;
+                    if (doneLCD) begin
+                        enableIOC <= 0;
+                        Index_Display_Temp <= Index_Display_Temp + 1;
+                        if (Index_Display_Temp == 15) begin
+                            Index_Display_Temp <= 0;
+                            fsm <= IDLE;
+                        end
+                    end
+                end  
+                DISPLAY_E: begin                               
+                    enableIOC <= 1;
+                    case (Index_Display_Temp)  
+                        0: data <= " ";
+                        1: data <= " ";
+                        2: data <= "N";
+                        3: data <= "G";
+                        4: data <= "O";
+                        5: data <= "A";
+                        6: data <= "I";
+                        7: data <= " ";
+                        8: data <= "T";
+                        9: data <= "R";
+                        10: data <= "O";
+                        11: data <= "I";
+                        12: data <= " ";
+                        13: data <= " ";
+                        14: data <= " ";
+                        15: data <= " ";
+                    endcase
+                    add <= {LCD_ADDRESS, WRITE};
+                    init <= 0;
+                    modeLCD <= 1;
+                    if (doneLCD) begin
+                        enableIOC <= 0;
+                        Index_Display_Temp <= Index_Display_Temp + 1;
+                        if (Index_Display_Temp == 15) begin
+                            Index_Display_Temp <= 0;
+                            fsm <= IDLE;
+                        end
+                    end
+                end  
+                DISPLAY_F: begin                               
+                    enableIOC <= 1;
+                    case (Index_Display_Temp)  
+                        0: data <= " ";
+                        1: data <= " ";
+                        2: data <= " ";
+                        3: data <= "M";
+                        4: data <= "U";
+                        5: data <= " ";
+                        6: data <= "M";
+                        7: data <= "A";
+                        8: data <= "T";
+                        9: data <= " ";
+                        10: data <= "A";
+                        11: data <= "A";
+                        12: data <= "A";
+                        13: data <= " ";
+                        14: data <= " ";
+                        15: data <= " ";
+                    endcase
+                    add <= {LCD_ADDRESS, WRITE};
+                    init <= 0;
+                    modeLCD <= 1;
+                    if (doneLCD) begin
+                        enableIOC <= 0;
+                        Index_Display_Temp <= Index_Display_Temp + 1;
+                        if (Index_Display_Temp == 15) begin
+                            Index_Display_Temp <= 0;
+                            fsm <= IDLE;
+                        end
+                    end
+                end  
+                IDLE: begin
+                    count <= count + 1;
+                    if (count > time_out) begin
+                        count <= 0;
+                        fsm <= READ_BH1750;
+                    end
+                end
+            endcase
+        end
+    end
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////Khoi tinh toan timeout///////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+    reg check_action = 0;
+    integer time_out = 0;
+    integer count_debound = 0;
+    always @(posedge clk500k) begin
+        if(~rst) begin
+            check_action <= 0;
+            time_out <= 0;
+            count_debound <= 0;
+        end
+        else begin
+            time_out <= (time_out > 999*500)?0:time_out;
+            if(~speed && check_action == 0) begin
+                check_action <= 1;
+            end
+            if (check_action) begin
+                count_debound <= count_debound + 1;
+                if(count_debound > 200*500) begin            //200ms debound
+                    if (speed) begin
+                        count_debound <= 0;
+                        check_action <= 0;
+                        time_out <= time_out + 200*500;         //tang 200ms
+                    end
+                end
+            end
+        end
+    end
+
+    assign xong = data;
+    assign xongIOC = data;
+endmodule

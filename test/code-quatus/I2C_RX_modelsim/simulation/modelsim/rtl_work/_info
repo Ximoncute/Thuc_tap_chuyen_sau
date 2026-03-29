@@ -1,0 +1,56 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dD:/Code_FPGA/Do_An/New folder/RX_1/simulation/modelsim
+vI2C_RX
+Z1 !s110 1744047514
+!i10b 1
+!s100 aZg^O>l;ARm=VP04ZNO511
+IelmTI`<nn;lSklm3b>D;>2
+Z2 VDg1SIo80bB@j0V0VzS_@n1
+R0
+w1744046939
+8D:/Code_FPGA/Do_An/New folder/RX_1/I2C_RX.v
+FD:/Code_FPGA/Do_An/New folder/RX_1/I2C_RX.v
+L0 3
+Z3 OV;L;10.5b;63
+r1
+!s85 0
+31
+Z4 !s108 1744047514.000000
+!s107 D:/Code_FPGA/Do_An/New folder/RX_1/I2C_RX.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+D:/Code_FPGA/Do_An/New folder/RX_1|D:/Code_FPGA/Do_An/New folder/RX_1/I2C_RX.v|
+!i113 1
+Z5 o-vlog01compat -work work
+Z6 !s92 -vlog01compat -work work {+incdir+D:/Code_FPGA/Do_An/New folder/RX_1}
+Z7 tCvgOpt 0
+n@i2@c_@r@x
+vtb_I2C_RX
+R1
+!i10b 1
+!s100 WP=dG`=4fYOj`M9:3^`_J3
+IeNS=F:fQHN:o6fEN2A7E[3
+R2
+R0
+w1744047456
+8D:/Code_FPGA/Do_An/New folder/RX_1/tb_I2C_RX.v
+FD:/Code_FPGA/Do_An/New folder/RX_1/tb_I2C_RX.v
+L0 3
+R3
+r1
+!s85 0
+31
+R4
+!s107 D:/Code_FPGA/Do_An/New folder/RX_1/tb_I2C_RX.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+D:/Code_FPGA/Do_An/New folder/RX_1|D:/Code_FPGA/Do_An/New folder/RX_1/tb_I2C_RX.v|
+!i113 1
+R5
+R6
+R7
+ntb_@i2@c_@r@x

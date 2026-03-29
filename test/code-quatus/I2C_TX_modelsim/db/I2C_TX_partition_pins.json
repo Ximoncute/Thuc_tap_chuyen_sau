@@ -1,0 +1,141 @@
+{
+	"partitions" : [
+		{
+			"name" : "Top",
+			"pins" : [
+				{
+					"name" : "done",
+					"strict" : false
+				},
+				{
+					"name" : "scl_i2c",
+					"strict" : false
+				},
+				{
+					"name" : "sda",
+					"strict" : false
+				},
+				{
+					"name" : "rst",
+					"strict" : false
+				},
+				{
+					"name" : "enable",
+					"strict" : false
+				},
+				{
+					"name" : "clk",
+					"strict" : false
+				},
+				{
+					"name" : "add_reg[0]",
+					"strict" : false
+				},
+				{
+					"name" : "add_reg[1]",
+					"strict" : false
+				},
+				{
+					"name" : "add_reg[2]",
+					"strict" : false
+				},
+				{
+					"name" : "add_reg[3]",
+					"strict" : false
+				},
+				{
+					"name" : "add_reg[4]",
+					"strict" : false
+				},
+				{
+					"name" : "add_reg[5]",
+					"strict" : false
+				},
+				{
+					"name" : "add_reg[6]",
+					"strict" : false
+				},
+				{
+					"name" : "add_reg[7]",
+					"strict" : false
+				},
+				{
+					"name" : "num_byte[0]",
+					"strict" : false
+				},
+				{
+					"name" : "num_byte[1]",
+					"strict" : false
+				},
+				{
+					"name" : "num_byte[2]",
+					"strict" : false
+				},
+				{
+					"name" : "add[2]",
+					"strict" : false
+				},
+				{
+					"name" : "add[1]",
+					"strict" : false
+				},
+				{
+					"name" : "add[0]",
+					"strict" : false
+				},
+				{
+					"name" : "add[3]",
+					"strict" : false
+				},
+				{
+					"name" : "add[5]",
+					"strict" : false
+				},
+				{
+					"name" : "add[6]",
+					"strict" : false
+				},
+				{
+					"name" : "add[4]",
+					"strict" : false
+				},
+				{
+					"name" : "add[7]",
+					"strict" : false
+				},
+				{
+					"name" : "data[5]",
+					"strict" : false
+				},
+				{
+					"name" : "data[6]",
+					"strict" : false
+				},
+				{
+					"name" : "data[4]",
+					"strict" : false
+				},
+				{
+					"name" : "data[7]",
+					"strict" : false
+				},
+				{
+					"name" : "data[2]",
+					"strict" : false
+				},
+				{
+					"name" : "data[1]",
+					"strict" : false
+				},
+				{
+					"name" : "data[0]",
+					"strict" : false
+				},
+				{
+					"name" : "data[3]",
+					"strict" : false
+				}
+			]
+		}
+	]
+}

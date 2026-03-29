@@ -1,0 +1,72 @@
+`timescale 1ns / 1ps
+
+module I2C_TX_tb;
+
+    reg clk;
+    reg rst;
+    reg enable;
+    reg [7:0] data;
+    reg [7:0] add;
+    reg [7:0] add_reg;
+    reg [2:0] num_byte;
+    wire done;
+    wire scl_i2c;
+    wire sda;
+
+    // Pull-up resistor simulation
+    pullup(scl_i2c);
+    pullup(sda);
+
+    // Instantiate the DUT
+    I2C_TX dut (
+        .clk(clk),
+        .rst(rst),
+        .enable(enable),
+        .data(data),
+        .add(add),
+        .add_reg(add_reg),
+        .num_byte(num_byte),
+        .done(done),
+        .scl_i2c(scl_i2c),
+        .sda(sda)
+    );
+
+    // Clock generation: 100MHz
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk;
+    end
+
+    // Main test sequence
+    initial begin
+        // Initial values
+        rst = 0;
+        enable = 0;
+        data = 8'h10;           // BH1750 command: One-time H-Resolution Mode
+        add = 8'h46;            // (0x23 << 1) | Write bit = 0x46
+        add_reg = 8'hFF;        // No register byte needed
+        num_byte = 3'd1;        // Sending 1 byte
+
+        // Reset
+        #50;
+        rst = 1;
+        #50;
+
+        // Send command
+        enable = 1;
+        #10000;
+
+        // Disable after transmission
+        enable = 0;
+
+        #2000;
+        $finish;
+    end
+
+    // Optional monitor
+    initial begin
+        $monitor("Time = %0t | enable = %b | done = %b | scl = %b | sda = %b", 
+                 $time, enable, done, scl_i2c, sda);
+    end
+
+endmodule

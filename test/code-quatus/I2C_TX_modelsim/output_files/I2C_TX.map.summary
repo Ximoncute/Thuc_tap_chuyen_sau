@@ -1,0 +1,16 @@
+Analysis & Synthesis Status : Successful - Tue Apr 08 08:31:36 2025
+Quartus Prime Version : 17.0.0 Build 595 04/25/2017 SJ Lite Edition
+Revision Name : I2C_TX
+Top-level Entity Name : I2C_TX
+Family : MAX 10
+Total logic elements : 362
+    Total combinational functions : 362
+    Dedicated logic registers : 135
+Total registers : 135
+Total pins : 33
+Total virtual pins : 0
+Total memory bits : 0
+Embedded Multiplier 9-bit elements : 0
+Total PLLs : 0
+UFM blocks : 0
+ADC blocks : 0

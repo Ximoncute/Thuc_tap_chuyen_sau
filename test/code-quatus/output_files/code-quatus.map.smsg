@@ -1,0 +1,4 @@
+Info (10281): Verilog HDL Declaration information at Top_module.v(21): object "INIT" differs only in case from object "init" in the same scope File: C:/Users/Admin/Documents/Nhóm_9_project/code-gowin/src/Top_module.v Line: 21
+Info (10281): Verilog HDL Declaration information at Top_module.v(39): object "lux" differs only in case from object "Lux" in the same scope File: C:/Users/Admin/Documents/Nhóm_9_project/code-gowin/src/Top_module.v Line: 39
+Warning (10268): Verilog HDL information at LCD_Send.v(23): always construct contains both blocking and non-blocking assignments File: C:/Users/Admin/Documents/Nhóm_9_project/code-gowin/src/LCD_Send.v Line: 23
+Warning (10268): Verilog HDL information at I2C_RX.v(40): always construct contains both blocking and non-blocking assignments File: C:/Users/Admin/Documents/Nhóm_9_project/code-gowin/src/I2C_RX.v Line: 40

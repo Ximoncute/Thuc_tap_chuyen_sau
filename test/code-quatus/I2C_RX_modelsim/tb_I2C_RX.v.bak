@@ -1,0 +1,81 @@
+`timescale 1ns / 1ps
+
+module tb_I2C_RX;
+
+    reg clk;
+    reg rst;
+    reg enable;
+    reg [7:0] add;
+
+    wire [15:0] data;
+    wire done;
+    wire scl_i2c;
+    wire sda;
+
+    reg sda_in;
+    reg scl_in;
+    wire sda_wire;
+    wire scl_wire;
+
+    // Pull up for inout lines
+    assign sda_wire = sda_in ? 1'bz : 0;
+    assign scl_wire = scl_in ? 1'bz : 0;
+
+    assign sda = sda_wire;
+    assign scl_i2c = scl_wire;
+
+    I2C_RX uut (
+        .clk(clk),
+        .rst(rst),
+        .enable(enable),
+        .add(add),
+        .data(data),
+        .done(done),
+        .scl_i2c(scl_wire),
+        .sda(sda_wire)
+    );
+
+    // Clock generation
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk; // 100MHz clock
+    end
+
+    initial begin
+        // Init values
+        rst = 0;
+        enable = 0;
+        add = 8'hA1; // Example address
+
+        sda_in = 1;
+        scl_in = 1;
+
+        // Reset
+        #20;
+        rst = 1;
+
+        #10;
+        enable = 1;
+
+        // Simulate some slave behavior for ACK
+        // Simple emulation - for a real test, you would simulate actual I2C slave responses
+        // Start sending ACKs or DATA after few cycles
+        #200;
+        sda_in = 0; // Simulate ACK from slave
+
+        #100;
+        sda_in = 1; // Release SDA
+
+        // Let it run for a while
+        #1000;
+
+        // Stop simulation
+        $finish;
+    end
+
+    initial begin
+        $dumpfile("i2c_rx_tb.vcd");
+        $dumpvars(0, tb_I2C_RX);
+    end
+
+endmodule
